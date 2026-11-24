@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Admin dashboard | CivicTrack{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">OFFICIAL CONSOLE</p><h1>Complaint management</h1><p class="muted">Review citizen reports, assign departments and update progress.</p></div></div>
+<div class="stats">
+  <div class="stat"><span>Total reports</span><strong>{{ totals }}</strong></div><div class="stat"><span>Open reports</span><strong>{{ open_count }}</strong></div><div class="stat"><span>Resolved</span><strong>{{ resolved }}</strong></div><div class="stat"><span>Escalated</span><strong>{{ escalated }}</strong></div>
+</div>
+<section class="admin-map-panel">
+  <div class="map-heading"><div><span class="map-kicker">LIVE ISSUE OVERVIEW</span><h2>Complaint locations</h2><p>Explore reported issues geographically. Select a marker to review its ticket.</p></div><span class="map-live"><i></i> Report map</span></div>
+  <div class="map-toolbar"><div class="map-search"><span>⌕</span><input id="admin-map-search" type="search" placeholder="Find an area or street…"><button type="button" id="admin-map-search-btn">Search</button></div><select id="admin-map-style" class="map-tool"><option value="street">Street map</option><option value="satellite">Satellite</option><option value="hybrid">Hybrid</option></select></div>
+  <div id="admin-issue-map" class="admin-issue-map" aria-label="Map of citizen complaints"></div>
+  <div class="map-legend"><span><i class="legend-pin red"></i> Pothole / road</span><span><i class="legend-pin green"></i> Garbage</span><span><i class="legend-pin blue"></i> Water</span><span><i class="legend-pin orange"></i> Streetlight</span><span><i class="legend-pin resolved"></i> Resolved</span></div>
+</section>
+<form method="get" class="filter-bar"><input name="q" value="{{ q }}" placeholder="Search ticket, title, citizen or address"><select name="status"><option value="">All statuses</option>{% for s in statuses %}<option value="{{ s }}" {{ 'selected' if selected_status == s else '' }}>{{ s }}</option>{% endfor %}</select><button class="btn primary">Filter</button><a class="btn secondary" href="{{ url_for('admin_dashboard') }}">Reset</a></form>
+{% if complaints %}
+<div class="table-wrap"><table><thead><tr><th>Ticket / Citizen</th><th>Issue</th><th>Location</th><th>Status</th><th>Escalation</th><th></th></tr></thead><tbody>
+{% for c in complaints %}
+<tr><td><strong class="ticket">{{ c.ticket_id }}</strong><small>{{ c.citizen_name }} · {{ c.citizen_email }}</small></td><td><strong>{{ c.title }}</strong><small>{{ c.category }}</small></td><td>{{ c.address }}</td><td><span class="status {{ c.status|lower|replace(' ', '-') }}">{{ c.status }}</span></td><td>{% if c.escalated %}<span class="urgent">Needs attention</span>{% else %}<span class="muted">—</span>{% endif %}</td><td><a href="{{ url_for('complaint_detail', complaint_id=c.id) }}">Review →</a></td></tr>
+{% endfor %}
+</tbody></table></div>
+{% else %}<div class="empty"><h3>No matching complaints</h3><p>Try changing your search or status filter.</p></div>{% endif %}
+<script id="complaint-map-data" type="application/json">{{ map_complaints|tojson }}</script>
+{% endblock %}

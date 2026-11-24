@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Choose account type | CivicTrack{% endblock %}
+{% block content %}
+<div class="auth-card wide-auth"><p class="eyebrow">JOIN CIVICTRACK</p><h1>How would you like to register?</h1><p class="muted">Choose the account type that matches your role.</p>
+<div class="role-options">
+<a class="role-card" href="{{ url_for('register', role='citizen') }}"><span class="role-icon">👤</span><h2>Citizen Registration</h2><p>Report potholes, garbage, water leaks and other local issues. Track your complaints.</p><span class="btn primary">Register as Citizen</span></a>
+<a class="role-card" href="{{ url_for('register', role='admin') }}"><span class="role-icon">🛡️</span><h2>Admin Registration</h2><p>Review, assign and update citizen complaints.</p><span class="btn secondary">Register as Admin</span></a>
+</div><p class="muted center">Already registered? <a href="{{ url_for('login') }}">Login</a></p></div>
+{% endblock %}

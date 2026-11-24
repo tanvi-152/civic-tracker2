@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ complaint.ticket_id }} | CivicTrack{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('admin_dashboard') if session.get('role') == 'admin' else url_for('dashboard') }}">← Back to dashboard</a>
+<div class="detail-header"><div><p class="eyebrow">COMPLAINT DETAILS</p><h1>{{ complaint.title }}</h1><p class="ticket">{{ complaint.ticket_id }}</p></div><span class="status large {{ complaint.status|lower|replace(' ', '-') }}">{{ complaint.status }}</span></div>
+<div class="detail-grid">
+  <section class="panel">
+    <h2>Issue information</h2>
+    <p><strong>Category</strong><br>{{ complaint.category }}</p>
+    <p><strong>Description</strong><br>{{ complaint.description }}</p>
+    <p><strong>Location</strong><br>{{ complaint.address }}</p>
+    {% if complaint.latitude is not none and complaint.longitude is not none %}<div id="detail-issue-map" class="detail-issue-map" data-lat="{{ complaint.latitude }}" data-lon="{{ complaint.longitude }}"></div><p class="small-text muted">GPS: {{ "%.6f"|format(complaint.latitude) }}, {{ "%.6f"|format(complaint.longitude) }}</p><p><a target="_blank" rel="noopener" href="https://www.google.com/maps?q={{ complaint.latitude }},{{ complaint.longitude }}">Open in Google Maps ↗</a> · <a target="_blank" rel="noopener" href="https://www.openstreetmap.org/?mlat={{ complaint.latitude }}&mlon={{ complaint.longitude }}#map=17/{{ complaint.latitude }}/{{ complaint.longitude }}">OpenStreetMap ↗</a></p>{% endif %}
+    {% if complaint.photo %}<img class="complaint-photo" src="{{ url_for('uploaded_file', filename=complaint.photo) }}" alt="Photo attached to complaint">{% endif %}
+    <p class="muted">Submitted: {{ complaint.created_at }}</p>
+  </section>
+  <section class="panel">
+    <h2>Resolution tracking</h2>
+    <div class="timeline">
+      <div class="timeline-step active"><b>1</b><div><strong>Submitted</strong><small>Your report has been received.</small></div></div>
+      <div class="timeline-step {{ 'active' if complaint.status in ['Assigned','In Progress','Resolved'] else '' }}"><b>2</b><div><strong>Assigned / reviewed</strong><small>{% if complaint.department %}Department: {{ complaint.department }}{% else %}Waiting for assignment{% endif %}</small></div></div>
+      <div class="timeline-step {{ 'active' if complaint.status in ['In Progress','Resolved'] else '' }}"><b>3</b><div><strong>Work in progress</strong><small>Current status: {{ complaint.status }}</small></div></div>
+      <div class="timeline-step {{ 'active' if complaint.status == 'Resolved' else '' }}"><b>4</b><div><strong>Resolved</strong><small>Final resolution confirmation.</small></div></div>
+    </div>
+    {% if complaint.admin_note %}<div class="note"><strong>Official update</strong><p>{{ complaint.admin_note }}</p></div>{% endif %}
+    {% if complaint.escalated %}<p class="urgent">⚠ This complaint has been marked for escalation.</p>{% endif %}
+    {% if complaint.status not in ['Resolved','Rejected'] and not complaint.escalated %}
+    <form method="post" action="{{ url_for('escalate_complaint', complaint_id=complaint.id) }}" onsubmit="return confirm('Escalate this complaint for attention?')"><button class="btn warning full">Escalate unresolved complaint</button></form>
+    {% endif %}
+  </section>
+</div>
+{% if session.get('role') == 'admin' %}
+<section class="panel admin-edit">
+  <h2>Update complaint (official use)</h2>
+  <form method="post" action="{{ url_for('update_complaint', complaint_id=complaint.id) }}" class="form">
+    <div class="two-col">
+      <label>Status<select name="status">{% for s in statuses %}<option value="{{ s }}" {{ 'selected' if complaint.status == s else '' }}>{{ s }}</option>{% endfor %}</select></label>
+      <label>Assigned department<input name="department" value="{{ complaint.department or '' }}" placeholder="e.g. Municipal Roads Department"></label>
+    </div>
+    <label>Update / resolution note<textarea name="admin_note" rows="3">{{ complaint.admin_note or '' }}</textarea></label>
+    <button class="btn primary">Save update</button>
+  </form>
+</section>
+{% endif %}
+{% endblock %}

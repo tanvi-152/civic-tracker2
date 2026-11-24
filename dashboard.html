@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}My complaints | CivicTrack{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div><p class="eyebrow">CITIZEN DASHBOARD</p><h1>Hello, {{ session.get('name') }} 👋</h1><p class="muted">Here is the progress of the issues you reported.</p></div>
+  <a class="btn primary" href="{{ url_for('new_complaint') }}">＋ Report an issue</a>
+</div>
+<div class="stats">
+  <div class="stat"><span>Total reports</span><strong>{{ complaints|length }}</strong></div>
+  <div class="stat"><span>Submitted</span><strong>{{ counts.get('Submitted', 0) }}</strong></div>
+  <div class="stat"><span>In progress</span><strong>{{ counts.get('In Progress', 0) + counts.get('Assigned', 0) }}</strong></div>
+  <div class="stat"><span>Resolved</span><strong>{{ counts.get('Resolved', 0) }}</strong></div>
+</div>
+<div class="section-title"><h2>Your reports</h2><span class="muted">{{ complaints|length }} total</span></div>
+{% if complaints %}
+<div class="table-wrap"><table><thead><tr><th>Ticket</th><th>Issue</th><th>Location</th><th>Status</th><th>Submitted</th><th></th></tr></thead><tbody>
+{% for c in complaints %}
+<tr><td class="ticket">{{ c.ticket_id }}</td><td><strong>{{ c.title }}</strong><small>{{ c.category }}</small></td><td>{{ c.address }}</td><td><span class="status {{ c.status|lower|replace(' ', '-') }}">{{ c.status }}</span>{% if c.escalated %}<small class="urgent">Escalated</small>{% endif %}</td><td>{{ c.created_at[:10] }}</td><td><a href="{{ url_for('complaint_detail', complaint_id=c.id) }}">View →</a></td></tr>
+{% endfor %}
+</tbody></table></div>
+{% else %}
+<div class="empty"><div>🧭</div><h3>No reports yet</h3><p>When you report a civic issue, its status will appear here.</p><a class="btn primary" href="{{ url_for('new_complaint') }}">Report your first issue</a></div>
+{% endif %}
+{% endblock %}

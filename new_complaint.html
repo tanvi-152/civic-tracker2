@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Report an issue | CivicTrack{% endblock %}
+{% block content %}
+<div class="form-page map-form-page">
+  <p class="eyebrow">HELP IMPROVE YOUR NEIGHBOURHOOD</p><h1>Report a civic issue</h1>
+  <p class="muted">Add clear details and pin the exact location so the concerned team can act.</p>
+  <form method="post" enctype="multipart/form-data" class="form panel">
+    <div class="two-col">
+      <label>Issue title *<input name="title" required maxlength="120" placeholder="e.g. Large pothole near the market"></label>
+      <label>Category *<select name="category" required><option value="">Choose category</option>{% for cat in categories %}<option>{{ cat }}</option>{% endfor %}</select></label>
+    </div>
+    <label>Description *<textarea name="description" required rows="4" maxlength="1500" placeholder="Describe what happened, how serious it is, and any useful landmark."></textarea></label>
+    <label>Address / landmark *<input id="address" name="address" required placeholder="Search a street, shop, landmark or enter address"></label>
+
+    <section class="map-section">
+      <div class="map-heading"><div><span class="map-kicker">LOCATION PICKER</span><h2>Pin the exact issue location</h2><p>Search places, use your GPS, or click anywhere on the map.</p></div><span class="map-live"><i></i> Interactive map</span></div>
+      <div class="map-toolbar">
+        <div class="map-search"><span>⌕</span><input id="map-search" type="search" placeholder="Search streets, shops, landmarks…"><button type="button" id="map-search-btn">Search</button></div>
+        <button type="button" class="map-tool" id="locate-btn">◎ <span>My location</span></button>
+        <select id="map-style" class="map-tool" aria-label="Map style"><option value="street">Street map</option><option value="satellite">Satellite</option><option value="hybrid">Hybrid</option></select>
+      </div>
+      <div class="map-canvas-wrap"><div id="issue-map" class="issue-map" aria-label="Interactive map for selecting issue location"></div><div class="map-zoom-hint">Click map to place pin · Drag pin to adjust</div></div>
+      <div class="map-bottomline"><span id="location-message">Choose a location on the map or search for a street or shop.</span><span id="map-coordinates" class="map-coordinates">Coordinates not selected</span></div>
+      <div class="map-legend"><span><i class="legend-pin selected"></i> Selected complaint</span><span><i class="legend-dot"></i> Nearby places (when loaded)</span><button type="button" id="nearby-btn" class="text-tool">＋ Show nearby places</button></div>
+      <div id="nearby-status" class="nearby-status">Nearby places are loaded from OpenStreetMap when requested.</div>
+    </section>
+    <input type="hidden" name="latitude" id="latitude"><input type="hidden" name="longitude" id="longitude">
+    <p class="muted small-text">Address details depend on OpenStreetMap coverage. GPS accuracy varies by device. A photo without embedded GPS metadata cannot reveal where it was taken.</p>
+    <label>Upload photo (optional, max 5 MB)<input id="issue-photo" type="file" name="photo" accept="image/png,image/jpeg,image/gif,image/webp"></label><span id="photo-location-message" class="muted small-text">Photo GPS detection happens when you submit the complaint.</span>
+    <div class="form-actions"><a class="btn secondary" href="{{ url_for('dashboard') }}">Cancel</a><button class="btn primary">Submit complaint</button></div>
+  </form>
+</div>
+{% endblock %}

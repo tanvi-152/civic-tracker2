@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}CivicTrack | Report. Track. Resolve.{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <p class="eyebrow">BETTER CITIES START WITH YOU</p>
+    <h1>Report civic issues.<br><span>Make your city better.</span></h1>
+    <p class="lead">A simple way to report potholes, garbage, water leaks, broken streetlights and other local problems — then track them until they are resolved.</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="{{ url_for('register_choice') }}">Register</a>
+      <a class="btn secondary" href="{{ url_for('login') }}">Login</a>
+    </div>
+  </div>
+  <div class="hero-art">
+    <div class="art-circle">🏙️</div>
+    <div class="art-card"><strong>Report submitted</strong><small>Ticket CIV-82A14F3B</small><span class="pill green">Being tracked</span></div>
+  </div>
+</section>
+<section class="features">
+  <article><div class="feature-icon">📸</div><h3>Photo evidence</h3><p>Attach a picture so officials can understand the issue.</p></article>
+  <article><div class="feature-icon">📍</div><h3>Location capture</h3><p>Use your device location or enter the address manually.</p></article>
+  <article><div class="feature-icon">🔎</div><h3>Track progress</h3><p>Follow status updates and escalate unresolved issues.</p></article>
+</section>
+{% endblock %}

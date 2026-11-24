@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ role|title }} registration | CivicTrack{% endblock %}
+{% block content %}
+<div class="auth-card"><p class="eyebrow">{{ role|upper }} ACCOUNT</p><h1>Register as {{ role|title }}</h1>
+<form method="post" class="form"><label>Full name<input name="name" required maxlength="100" placeholder="Your name"></label><label>Email address<input type="email" name="email" required placeholder="you@example.com"></label><label>Password<input type="password" name="password" required minlength="8" placeholder="At least 8 characters"></label>
+{% if role == 'admin' %}<label>Administrator setup code<input type="password" name="admin_code" required placeholder="Enter admin registration code"><small class="muted">Demo code: CIVIC-ADMIN-2026. Change ADMIN_REGISTRATION_CODE before deployment.</small></label>{% endif %}
+<button class="btn primary full">Create {{ role|title }} account</button></form>
+<p class="muted center"><a href="{{ url_for('register_choice') }}">← Choose another account type</a></p><p class="muted center">Already registered? <a href="{{ url_for('login') }}">Login</a></p></div>
+{% endblock %}
